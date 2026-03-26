@@ -1,10 +1,10 @@
-# Fixed Dockerfile for Render deployment - includes sentence_transformers
+# Fixed Dockerfile for Render deployment - includes browser_use
 FROM python:3.11-slim
 
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies for whisper and other packages
+# Install system dependencies for whisper, browser_use and other packages
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -15,6 +15,21 @@ RUN apt-get update && apt-get install -y \
     python3-dev \
     ffmpeg \
     libsndfile1 \
+    # browser_use dependencies
+    libnss3 \
+    libnspr4 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
+    libdbus-1-3 \
+    libxkbcommon0 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxrandr2 \
+    libgbm1 \
+    libasound2 \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
@@ -41,7 +56,8 @@ RUN pip install --no-cache-dir \
     pydantic \
     pydantic-settings \
     webcolors \
-    sentence-transformers
+    sentence-transformers \
+    browser-use
 
 # Copy application files
 COPY . /app/
