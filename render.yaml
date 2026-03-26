@@ -3,14 +3,13 @@ services:
     name: agent-zero
     env: docker
     plan: free
-    dockerfilePath: ./DockerfileLocal
-    dockerContext: .
+    dockerfilePath: ./DockerfileRender
     region: frankfurt
     healthCheckPath: /
     envVars:
       - key: PORT
-        value: 80
+        value: "80"
       - key: DEFAULT_USER_TIMEZONE
         value: Europe/Paris
       - key: DEFAULT_USER_UTC_OFFSET_MINUTES
-        value: 60
+        value: "60"

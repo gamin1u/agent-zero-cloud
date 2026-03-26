@@ -1,0 +1,36 @@
+# Simplified Dockerfile for Render deployment
+FROM python:3.11-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy application files
+COPY . /app/
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt 2>/dev/null || echo "No requirements.txt found"
+
+# Install common packages
+RUN pip install --no-cache-dir \
+    fastapi \
+    uvicorn \
+    python-multipart \
+    python-dotenv \
+    requests
+
+# Expose port
+EXPOSE 80
+
+# Set environment variables
+ENV PORT=80
+ENV PYTHONUNBUFFERED=1
+
+# Run the application
+CMD ["python", "agent.py"]
