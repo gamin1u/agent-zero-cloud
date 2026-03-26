@@ -17,13 +17,16 @@ COPY . /app/
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt 2>/dev/null || echo "No requirements.txt found"
 
-# Install common packages
+# Install required packages for Agent Zero
 RUN pip install --no-cache-dir \
     fastapi \
     uvicorn \
     python-multipart \
     python-dotenv \
-    requests
+    requests \
+    nest_asyncio \
+    openai \
+    anthropic
 
 # Expose port
 EXPOSE 80
