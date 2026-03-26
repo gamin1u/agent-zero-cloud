@@ -38,7 +38,8 @@ RUN pip install --no-cache-dir \
     langchain-community \
     tiktoken \
     pydantic \
-    pydantic-settings
+    pydantic-settings \
+    webcolors
 
 # Copy application files
 COPY . /app/
