@@ -1,4 +1,4 @@
-# Fixed Dockerfile for Render deployment - no silent failures
+# Fixed Dockerfile for Render deployment - includes Python git module
 FROM python:3.11-slim
 
 # Set working directory
@@ -22,6 +22,7 @@ COPY requirements.txt /app/
 
 # Install critical Python packages explicitly (no silent failures)
 RUN pip install --no-cache-dir \
+    GitPython \
     openai-whisper \
     cryptography \
     fastapi \
