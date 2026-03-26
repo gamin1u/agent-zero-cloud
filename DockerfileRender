@@ -1,10 +1,10 @@
-# Comprehensive Dockerfile for Render deployment
+# Fixed Dockerfile for Render deployment - no silent failures
 FROM python:3.11-slim
 
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies for whisper and other packages
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -13,19 +13,16 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     libffi-dev \
     python3-dev \
+    ffmpeg \
+    libsndfile1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
 COPY requirements.txt /app/
 
-# Install Python dependencies from requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt || echo "Some packages failed, continuing..."
-
-# Copy application files
-COPY . /app/
-
-# Install additional packages that might be missing
+# Install critical Python packages explicitly (no silent failures)
 RUN pip install --no-cache-dir \
+    openai-whisper \
     cryptography \
     fastapi \
     uvicorn \
@@ -38,7 +35,13 @@ RUN pip install --no-cache-dir \
     litellm \
     langchain-core \
     langchain \
-    langchain-community
+    langchain-community \
+    tiktoken \
+    pydantic \
+    pydantic-settings
+
+# Copy application files
+COPY . /app/
 
 # Expose port
 EXPOSE 80
