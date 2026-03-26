@@ -26,7 +26,10 @@ RUN pip install --no-cache-dir \
     requests \
     nest_asyncio \
     openai \
-    anthropic
+    anthropic \
+    litellm \
+    langchain-core \
+    langchain
 
 # Expose port
 EXPOSE 80
