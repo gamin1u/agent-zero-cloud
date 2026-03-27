@@ -64,6 +64,12 @@ RUN pip install --no-cache-dir \
     google-auth \
     google-auth-oauthlib \
     google-auth-httplib2 
+    pytz \
+    duckduckgo-search \
+    imapclient \
+    html2text \
+    dirty-json \
+    python-crontab
 
 # Copy application files
 COPY . /app/
