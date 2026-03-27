@@ -68,7 +68,6 @@ RUN pip install --no-cache-dir \
     duckduckgo-search \
     imapclient \
     html2text \
-    dirty-json \
     python-crontab
 
 # Copy application files
