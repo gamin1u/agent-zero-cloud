@@ -1,6 +1,5 @@
 import base64
 import warnings
-import whisper
 import tempfile
 import asyncio
 from python.helpers import runtime, rfc, settings, files
@@ -10,16 +9,24 @@ from python.helpers.notification import NotificationManager, NotificationType, N
 # Suppress FutureWarning from torch.load
 warnings.filterwarnings("ignore", category=FutureWarning)
 
+# Optional whisper import
+try:
+    import whisper
+    WHISPER_AVAILABLE = True
+except ImportError:
+    WHISPER_AVAILABLE = False
+    whisper = None
+
 _model = None
 _model_name = ""
 is_updating_model = False  # Tracks whether the model is currently updating
 
 async def preload(model_name:str):
+    if not WHISPER_AVAILABLE:
+        raise ImportError("Whisper is not available in this environment. Please install openai-whisper or use a version with voice features enabled.")
     try:
-        # return await runtime.call_development_function(_preload, model_name)
         return await _preload(model_name)
     except Exception as e:
-        # if not runtime.is_development():
         raise e
         
 async def _preload(model_name:str):
@@ -50,7 +57,6 @@ async def _preload(model_name:str):
         is_updating_model = False
 
 async def is_downloading():
-    # return await runtime.call_development_function(_is_downloading)
     return _is_downloading()
 
 def _is_downloading():
@@ -58,19 +64,16 @@ def _is_downloading():
 
 async def is_downloaded():
     try:
-        # return await runtime.call_development_function(_is_downloaded)
         return _is_downloaded()
     except Exception as e:
-        # if not runtime.is_development():
         raise e
-        # Fallback to direct execution if RFC fails in development
-        # return _is_downloaded()
 
 def _is_downloaded():
     return _model is not None
 
 async def transcribe(model_name:str, audio_bytes_b64: str):
-    # return await runtime.call_development_function(_transcribe, model_name, audio_bytes_b64)
+    if not WHISPER_AVAILABLE:
+        raise ImportError("Whisper is not available in this environment. Please install openai-whisper or use a version with voice features enabled.")
     return await _transcribe(model_name, audio_bytes_b64)
 
 

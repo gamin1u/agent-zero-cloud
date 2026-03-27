@@ -40,7 +40,12 @@ from langchain_core.messages import (
     SystemMessage,
 )
 from langchain.embeddings.base import Embeddings
-from sentence_transformers import SentenceTransformer
+try:
+    from sentence_transformers import SentenceTransformer
+    SENTENCE_TRANSFORMERS_AVAILABLE = True
+except ImportError:
+    SENTENCE_TRANSFORMERS_AVAILABLE = False
+    SentenceTransformer = None
 from pydantic import ConfigDict
 
 
@@ -702,6 +707,11 @@ class LocalSentenceTransformerWrapper(Embeddings):
         model_config: Optional[ModelConfig] = None,
         **kwargs: Any,
     ):
+        if not SENTENCE_TRANSFORMERS_AVAILABLE:
+            raise ImportError(
+                "sentence-transformers is not available in this environment. "
+                "Please install it with: pip install sentence-transformers"
+            )
         # Clean common user-input mistakes
         model = model.strip().strip('"').strip("'")
 
