@@ -38,6 +38,7 @@ RUN pip install --no-cache-dir \
     tiktoken \
     pydantic \
     pydantic-settings \
+    webcolors \
     flask \
     werkzeug \
     a2wsgi \
