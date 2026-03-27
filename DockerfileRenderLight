@@ -68,7 +68,8 @@ RUN pip install --no-cache-dir \
     duckduckgo-search \
     imapclient \
     html2text \
-    python-crontab
+    python-crontab \
+    fastmcp
 
 # Copy application files
 COPY . /app/
