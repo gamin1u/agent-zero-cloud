@@ -585,82 +585,41 @@ class AsyncAIChatReplacement:
         self.chat = AsyncAIChatReplacement._Chat(wrapper)
 
 
-from browser_use.llm import ChatOllama, ChatOpenRouter, ChatGoogle, ChatAnthropic, ChatGroq, ChatOpenAI
+# Optional browser_use import
+try:
+    from browser_use.llm import ChatOllama, ChatOpenRouter, ChatGoogle, ChatAnthropic, ChatGroq, ChatOpenAI
+    BROWSER_USE_AVAILABLE = True
+except ImportError:
+    BROWSER_USE_AVAILABLE = False
+    ChatOllama = None
+    ChatOpenRouter = None
+    ChatGoogle = None
+    ChatAnthropic = None
+    ChatGroq = None
+    ChatOpenAI = None
 
-class BrowserCompatibleChatWrapper(ChatOpenRouter):
-    """
-    A wrapper for browser agent that can filter/sanitize messages
-    before sending them to the LLM.
-    """
-
-    def __init__(self, *args, **kwargs):
-        turn_off_logging()
-        # Create the underlying LiteLLM wrapper
-        self._wrapper = LiteLLMChatWrapper(*args, **kwargs)
-        # Browser-use may expect a 'model' attribute
-        self.model = self._wrapper.model_name
-        self.kwargs = self._wrapper.kwargs
-
-    @property
-    def model_name(self) -> str:
-        return self._wrapper.model_name
-
-    @property
-    def provider(self) -> str:
-        return self._wrapper.provider
-
-    def get_client(self, *args, **kwargs):  # type: ignore
-        return AsyncAIChatReplacement(self, *args, **kwargs)
-
-    async def _acall(
-        self,
-        messages: List[BaseMessage],
-        stop: Optional[List[str]] = None,
-        run_manager: Optional[CallbackManagerForLLMRun] = None,
-        **kwargs: Any,
-    ):
-        # Apply rate limiting if configured
-        apply_rate_limiter_sync(self._wrapper.a0_model_conf, str(messages))
-
-        # Call the model
-        try:
-            model = kwargs.pop("model", None)
-            kwrgs = {**self._wrapper.kwargs, **kwargs}
-
-            # hack from browser-use to fix json schema for gemini (additionalProperties, $defs, $ref)
-            if "response_format" in kwrgs and "json_schema" in kwrgs["response_format"] and model.startswith("gemini/"):
-                kwrgs["response_format"]["json_schema"] = ChatGoogle("")._fix_gemini_schema(kwrgs["response_format"]["json_schema"])
-
-            resp = await acompletion(
-                model=self._wrapper.model_name,
-                messages=messages,
-                stop=stop,
-                **kwrgs,
-            )
-
-            # Gemini: strip triple backticks and conform schema
-            try:
-                msg = resp.choices[0].message # type: ignore
-                if self.provider == "gemini" and isinstance(getattr(msg, "content", None), str):
-                    cleaned = browser_use_monkeypatch.gemini_clean_and_conform(msg.content) # type: ignore
-                    if cleaned:
-                        msg.content = cleaned
-            except Exception:
-                pass
-
-        except Exception as e:
-            raise e
-
-        # another hack for browser-use post process invalid jsons
-        try:
-            if "response_format" in kwrgs and "json_schema" in kwrgs["response_format"] or "json_object" in kwrgs["response_format"]:
-                if resp.choices[0].message.content is not None and not resp.choices[0].message.content.startswith("{"): # type: ignore
-                    js = dirty_json.parse(resp.choices[0].message.content) # type: ignore
-                    resp.choices[0].message.content = dirty_json.stringify(js) # type: ignore
-        except Exception as e:
-            pass
-
-        return resp
+# Fallback base class if browser_use is not available
+if BROWSER_USE_AVAILABLE:
+    class BrowserCompatibleChatWrapper(ChatOpenRouter):
+        """
+        A wrapper for browser agent that can filter/sanitize messages
+        before sending them to the LLM.
+        """
+        def __init__(self, *args, **kwargs):
+            turn_off_logging()
+            # Create the underlying LiteLLM wrapper
+            self._wrapper = LiteLLMChatWrapper(*args, **kwargs)
+            # Browser-use may expect a 'model' attribute
+            self.model = self._wrapper.model_name
+            self.kwargs = self._wrapper.kwargs
+else:
+    # Create a dummy base class for type compatibility
+    class BrowserCompatibleChatWrapper:
+        """
+        Fallback wrapper when browser_use is not available.
+        """
+        def __init__(self, *args, **kwargs):
+            raise ImportError("browser_use is not installed. Browser automation features are disabled.")
 
 class LiteLLMEmbeddingWrapper(Embeddings):
     model_name: str
