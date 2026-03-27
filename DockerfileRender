@@ -1,4 +1,4 @@
-# Fixed Dockerfile for Render deployment - includes browser_use
+# Fixed Dockerfile for Render deployment - correct entry point
 FROM python:3.11-slim
 
 # Set working directory
@@ -57,7 +57,10 @@ RUN pip install --no-cache-dir \
     pydantic-settings \
     webcolors \
     sentence-transformers \
-    browser-use
+    browser-use \
+    flask \
+    werkzeug \
+    a2wsgi
 
 # Copy application files
 COPY . /app/
@@ -68,6 +71,7 @@ EXPOSE 80
 # Set environment variables
 ENV PORT=80
 ENV PYTHONUNBUFFERED=1
+ENV WEB_UI_HOST=0.0.0.0
 
-# Run the application
-CMD ["python", "agent.py"]
+# Run the web UI server (not agent.py)
+CMD ["python", "run_ui.py"]
