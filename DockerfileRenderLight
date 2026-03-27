@@ -1,0 +1,84 @@
+# Lightweight Dockerfile for Render Free Tier (512MB)
+# Removes heavy ML dependencies: whisper, sentence-transformers, browser-use, PyTorch
+FROM python:3.11-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install minimal system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    wget \
+    build-essential \
+    libssl-dev \
+    libffi-dev \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements first for better caching
+COPY requirements.txt /app/
+
+# Install ONLY essential Python packages (no ML heavyweights)
+RUN pip install --no-cache-dir \
+    GitPython \
+    cryptography \
+    fastapi \
+    uvicorn \
+    python-multipart \
+    python-dotenv \
+    requests \
+    nest_asyncio \
+    openai \
+    anthropic \
+    litellm \
+    langchain-core \
+    langchain \
+    langchain-community \
+    tiktoken \
+    pydantic \
+    pydantic-settings \
+    flask \
+    werkzeug \
+    a2wsgi \
+    beautifulsoup4 \
+    lxml \
+    httpx \
+    aiohttp \
+    rich \
+    reportlab \
+    python-docx \
+    pypdf \
+    pillow \
+    pyyaml \
+    sqlalchemy \
+    psutil \
+    click \
+    typer \
+    inquirerpy \
+    posthog \
+    mcp \
+    groq \
+    google-api-python-client \
+    google-auth \
+    google-auth-oauthlib \
+    google-auth-httplib2 
+
+# Copy application files
+COPY . /app/
+
+# Expose port
+EXPOSE 80
+
+# Set environment variables
+ENV PORT=80
+ENV PYTHONUNBUFFERED=1
+ENV WEB_UI_HOST=0.0.0.0
+
+# Disable heavy features to prevent errors
+ENV DISABLE_WHISPER=true
+ENV DISABLE_SENTENCE_TRANSFORMERS=true
+ENV DISABLE_BROWSER_USE=true
+
+# Run the web UI server
+CMD ["python", "run_ui.py"]

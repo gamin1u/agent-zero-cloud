@@ -1,15 +1,20 @@
 services:
   - type: web
-    name: agent-zero
+    name: agent-zero-light
     env: docker
     plan: free
-    dockerfilePath: ./DockerfileRender
-    region: frankfurt
-    healthCheckPath: /
+    dockerfilePath: ./DockerfileRenderLight
+    dockerContext: .
     envVars:
       - key: PORT
-        value: "80"
-      - key: DEFAULT_USER_TIMEZONE
-        value: Europe/Paris
-      - key: DEFAULT_USER_UTC_OFFSET_MINUTES
-        value: "60"
+        value: 80
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: WEB_UI_HOST
+        value: "0.0.0.0"
+      - key: DISABLE_WHISPER
+        value: "true"
+      - key: DISABLE_SENTENCE_TRANSFORMERS
+        value: "true"
+      - key: DISABLE_BROWSER_USE
+        value: "true"
