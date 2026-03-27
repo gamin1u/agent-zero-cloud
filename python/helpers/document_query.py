@@ -26,7 +26,7 @@ from python.helpers.print_style import PrintStyle
 from python.helpers import files, errors
 from agent import Agent
 
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
 DEFAULT_SEARCH_THRESHOLD = 0.5
