@@ -63,7 +63,7 @@ RUN pip install --no-cache-dir \
     google-api-python-client \
     google-auth \
     google-auth-oauthlib \
-    google-auth-httplib2 
+    google-auth-httplib2 \
     pytz \
     duckduckgo-search \
     imapclient \
