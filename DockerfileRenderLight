@@ -69,7 +69,8 @@ RUN pip install --no-cache-dir \
     imapclient \
     html2text \
     python-crontab \
-    fastmcp
+    fastmcp \
+    pathspec
 
 # Copy application files
 COPY . /app/
