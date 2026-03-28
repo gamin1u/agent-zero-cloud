@@ -8,7 +8,7 @@ import faiss
 
 
 from langchain_core.documents import Document
-from langchain_community.storage import InMemoryByteStore
+from langchain_community.storage import InMemoryStore
 from langchain_community.docstore.in_memory import InMemoryDocstore
 from langchain_community.vectorstores.utils import (
     DistanceStrategy,
@@ -47,7 +47,7 @@ class VectorDB:
             "default",
         )
         if namespace not in VectorDB._cached_embeddings:
-            store = InMemoryByteStore()
+            store = InMemoryStore()
             VectorDB._cached_embeddings[namespace] = (
                 CacheBackedEmbeddings.from_bytes_store(
                     model,

@@ -6,7 +6,10 @@ from pathlib import Path
 
 from python.helpers.tool import Tool, Response
 from python.helpers import files, defer, persist_chat, strings
-from python.helpers.browser_use import browser_use  # type: ignore[attr-defined]
+try:
+    from python.helpers.browser_use import browser_use  # type: ignore[attr-defined]
+except ImportError:
+    browser_use = None
 from python.helpers.print_style import PrintStyle
 from python.helpers.playwright import ensure_playwright_binary
 from python.helpers.secrets import get_secrets_manager

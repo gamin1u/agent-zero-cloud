@@ -7,7 +7,7 @@ import json
 from python.helpers.vector_db import VectorDB
 
 os.environ["USER_AGENT"] = "@mixedbread-ai/unstructured"  # noqa E402
-from langchain_unstructured import UnstructuredLoader  # noqa E402
+from langchain_community.document_loaders import UnstructuredLoader  # noqa E402
 
 from urllib.parse import urlparse
 from typing import Callable, Sequence, List, Optional, Tuple
