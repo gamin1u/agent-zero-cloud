@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Any, List, Sequence
-from langchain_community.storage import InMemoryStore, LocalFileStore
+from langchain.storage import InMemoryByteStore
+from langchain_community.storage import LocalFileStore
 from langchain_community.embeddings import CacheBackedEmbeddings
 from python.helpers import guids
 
@@ -147,7 +148,7 @@ class Memory:
         os.makedirs(db_dir, exist_ok=True)
 
         if in_memory:
-            store = InMemoryStore()
+            store = InMemoryByteStore()
         else:
             os.makedirs(em_dir, exist_ok=True)
             store = LocalFileStore(em_dir)
